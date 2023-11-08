@@ -32,18 +32,35 @@ export class AuthService {
         const isMatch = password == user.password;
         if (!isMatch) throw new UnauthorizedException();
 
-        const refreshToken = await this.generateRefreshToken(user.id);
+        const refreshToken = this.generateRefreshToken(user.id);
         await this.createRefreshTokenUsingUser(user.id, refreshToken);
 
         return {
-            accessToken: this.jwtService.sign({ sub: user.id }),
+            accessToken: this.generateAccessToken(user.id),
             refreshToken,
         };
+    }
+
+    async refresh(token: string, userId: string) {
+        const refreshTokenEntity = await this.refreshTokenRepository.findOneBy({ token });
+        if (!refreshTokenEntity) throw new BadRequestException();
+
+        const refreshToken = this.generateRefreshToken(userId);
+        refreshTokenEntity.token = refreshToken;
+        await this.refreshTokenRepository.save(refreshTokenEntity);
+
+        const accessToken = this.generateAccessToken(userId);
+        return { accessToken, refreshToken };
     }
 
     private generateRefreshToken(userId: string) {
         const payload = { sub: userId, tokenType: 'refresh' };
         return this.jwtService.sign(payload, { expiresIn: '1d' });
+    }
+
+    private generateAccessToken(userId: string) {
+        const payload = { sub: userId, tokenType: 'access' };
+        return this.jwtService.sign(payload, { expiresIn: '1h' });
     }
 
     private async createRefreshTokenUsingUser(userId: string, refreshToken: string) {
