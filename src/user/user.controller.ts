@@ -1,11 +1,13 @@
-import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { ApiBearerAuth, ApiExtraModels, ApiTags } from '@nestjs/swagger';
 import { UserService } from './user.service';
 import { FindUserReqDto } from './dto/req.dto';
 import { PageReqDto } from '../common/dto/req.dto';
 import { ApiGetItemsResponse, ApiGetResponse } from '../common/decorator/swagger.decorator';
 import { FindUserResDto } from './dto/res.dto';
-import { UserAfterAuth, User } from '../common/decorator/user.decorator';
+import { User, UserAfterAuth } from '../common/decorator/user.decorator';
+import { Role } from './enum/user.enum';
+import { Roles } from '../common/decorator/role.decorator';
 
 @ApiTags('User')
 @ApiExtraModels(FindUserReqDto, PageReqDto, FindUserResDto)
@@ -15,9 +17,9 @@ export class UserController {
 
     @ApiBearerAuth()
     @ApiGetItemsResponse(FindUserResDto)
+    @Roles(Role.Admin)
     @Get()
     findAll(@Query() { page, size }: PageReqDto, @User() user: UserAfterAuth) {
-        console.log(user);
         return this.userService.findAll();
     }
 
