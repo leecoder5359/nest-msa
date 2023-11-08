@@ -5,21 +5,21 @@ import { Video } from './entity/video.entity';
 
 @Injectable()
 export class VideoService {
-  constructor(@InjectRepository(Video) private videoRepository: Repository<Video>) {}
+    constructor(@InjectRepository(Video) private videoRepository: Repository<Video>) {}
 
-  async create() {
-    return 'create';
-  }
+    async create() {
+        return 'create';
+    }
 
-  async findAll() {
-    return 'video list';
-  }
+    async findAll() {
+        return 'video list';
+    }
 
-  async findOne(id: string) {
-    return 'video';
-  }
+    async findOne(id: string) {
+        return 'video';
+    }
 
-  async download(id: string) {
-    return 'play';
-  }
+    async download(id: string) {
+        return 'play';
+    }
 }
