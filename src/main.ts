@@ -5,6 +5,7 @@ import { AppModule } from './app.module';
 import * as process from 'process';
 import { utilities, WinstonModule } from 'nest-winston';
 import * as winston from 'winston';
+import { TransformInterceptor } from './common/interceptor/transform.interceptor';
 
 async function bootstrap() {
     const port = 3000;
@@ -44,6 +45,9 @@ async function bootstrap() {
             transform: true,
         }),
     );
+
+    // Intercepter 전역 적용
+    app.useGlobalInterceptors(new TransformInterceptor());
 
     await app.listen(port);
     Logger.log(`STAGE: ${process.env.STAGE}`);
