@@ -2,6 +2,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerCustomOptions, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import * as process from 'process';
 
 async function bootstrap() {
     const port = 3000;
@@ -31,6 +32,7 @@ async function bootstrap() {
     );
 
     await app.listen(port);
+    console.info(`STAGE: ${process.env.STAGE}`);
     console.info(`listening on port ${port}`);
 }
 
