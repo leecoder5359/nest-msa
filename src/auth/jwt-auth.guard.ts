@@ -1,5 +1,5 @@
 import { AuthGuard } from '@nestjs/passport';
-import { ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
+import { ExecutionContext, Inject, Injectable, Logger, LoggerService, UnauthorizedException } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { Reflector } from '@nestjs/core';
 import { IS_PUBLIC_KEY } from '../common/decorator/public.decorator';
@@ -12,7 +12,12 @@ import { UserService } from '../user/user.service';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
-    constructor(private reflector: Reflector, private jwtService: JwtService, private userService: UserService) {
+    constructor(
+        private reflector: Reflector,
+        private jwtService: JwtService,
+        private userService: UserService,
+        @Inject(Logger) private logger: LoggerService,
+    ) {
         super();
     }
 
@@ -30,8 +35,9 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
         const decoded = this.jwtService.decode(token);
 
         if (url !== '/api/auth/refresh' && decoded['tokenType'] === 'refresh') {
-            console.error('accessToken is required');
-            throw new UnauthorizedException();
+            const error = new UnauthorizedException('accessToken is required');
+            this.logger.error(error.message, error.stack);
+            throw error;
         }
 
         const requireRoles = this.reflector.getAllAndOverride<Role[]>(ROLES_KEY, [
