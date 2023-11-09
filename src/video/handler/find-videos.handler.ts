@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { FindVideosQuery } from './query/find-videos.query';
+import { FindVideosQuery } from '../query/find-videos.query';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Video } from './entity/video.entity';
+import { Video } from '../entity/video.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()
