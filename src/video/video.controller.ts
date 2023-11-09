@@ -14,7 +14,6 @@ import {
     UseInterceptors,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiConsumes, ApiExtraModels, ApiTags } from '@nestjs/swagger';
-import { VideoService } from './video.service';
 import { CreateVideoReqDto, FindVideoReqDto } from './dto/req.dto';
 import { PageReqDto } from '../common/dto/req.dto';
 import { ApiGetItemsResponse, ApiGetResponse, ApiPostResponse } from '../common/decorator/swagger.decorator';
@@ -29,17 +28,14 @@ import { FindVideosQuery } from './query/find-videos.query';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { FindOneVideoQuery } from './query/find-one-video.query';
 import { Response } from 'express';
+import { DownloadVideoCommand } from './command/download-video.command';
 
 @ApiTags('Video')
 @ApiExtraModels(FindVideoReqDto, PageReqDto, PageResDto, FindVideoResDto, CreateVideoResDto)
 @UseGuards(ThrottlerBehindProxyGuard)
 @Controller('api/videos')
 export class VideoController {
-    constructor(
-        private readonly videoService: VideoService,
-        private commandBus: CommandBus,
-        private queryBus: QueryBus,
-    ) {}
+    constructor(private commandBus: CommandBus, private queryBus: QueryBus) {}
 
     @ApiBearerAuth()
     @ApiConsumes('multipart/form-data')
@@ -106,13 +102,14 @@ export class VideoController {
     @Throttle({ default: { limit: 3, ttl: 60000 } })
     @Get(':id/download')
     async download(@Param() { id }: FindVideoReqDto, @Res({ passthrough: true }) res: Response) {
-        const { stream, mimetype, size } = await this.videoService.download(id);
+        const downloadVideoCommand = new DownloadVideoCommand(id);
+        const { stream, mimetype, size } = await this.commandBus.execute(downloadVideoCommand);
         res.set({
             'Content-Length': size,
             'Content-Type': mimetype,
             'Content-Disposition': 'attachment;',
         });
 
-        return new StreamableFile(<Uint8Array>stream);
+        return new StreamableFile(stream);
     }
 }

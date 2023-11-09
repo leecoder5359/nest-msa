@@ -1,5 +1,5 @@
 import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
-import { VideoCreatedEvent } from '../event/video-created.event';
+import { VideoCreatedEvent } from '../video-created.event';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()

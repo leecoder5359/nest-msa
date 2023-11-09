@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
-import { CreateVideoCommand } from '../command/create-video.command';
+import { CreateVideoCommand } from '../create-video.command';
 import { DataSource } from 'typeorm';
-import { Video } from '../entity/video.entity';
-import { User } from '../../user/entity/user.entity';
-import { VideoCreatedEvent } from '../event/video-created.event';
+import { Video } from '../../entity/video.entity';
+import { User } from '../../../user/entity/user.entity';
+import { VideoCreatedEvent } from '../../event/video-created.event';
 import { join } from 'path';
 import { writeFile } from 'fs/promises';
 
