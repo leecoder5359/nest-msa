@@ -9,6 +9,7 @@ import { FindVideosQueryHandler } from './query/handler/find-videos.handler';
 import { FindOneVideoHandler } from './query/handler/find-one-video.handler';
 import { DownloadVideoHandler } from './command/handler/download-video.handler';
 import { VideoDownloadedHandler } from './event/handler/video-downloaded.handler';
+import { VideoService } from './video.service';
 
 @Module({
     imports: [TypeOrmModule.forFeature([Video]), CqrsModule],
@@ -20,6 +21,8 @@ import { VideoDownloadedHandler } from './event/handler/video-downloaded.handler
         FindOneVideoHandler,
         DownloadVideoHandler,
         VideoDownloadedHandler,
+        VideoService,
     ],
+    exports: [VideoService],
 })
 export class VideoModule {}
