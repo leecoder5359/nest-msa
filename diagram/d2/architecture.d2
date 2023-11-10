@@ -2,34 +2,27 @@ direction: right
 
 client: Client
 
-ec2: AWS EC2 {
-  server: NestJS Server {
-    auth: Auth 모듈
-    user: User 모듈
-    video: Video 모듈
-    analytics: Analytics 모듈
-    email: Email 모듈
-  }
+client -> docker_compose.api_gateway: request
 
-  postgres.shape: cylinder
+docker_compose: docker-compose {
+  api_gateway: API Gateway
+  user: User
+  video: Video
+  analytics: Analytics
+
+  kafka: Kafka
+  user_db: User DB
+  video_db: Video DB
+  analytics_db: Analytics DB
+
+  api_gateway -> user: TCP
+  api_gateway -> video: TCP
+  api_gateway -> analytics: TCP
+
+  video -> kafka: produce
+  kafka -> analytics: consume
+
+  user -> user_db
+  video -> video_db
+  analytics -> analytics_db
 }
-
-client -> ec2.server: API
-
-ec2.server.auth -> ec2.postgres
-ec2.server.user -> ec2.postgres
-ec2.server.video -> ec2.postgres
-
-github: Github
-
-email: 외부 Email
-
-ec2.server.email -> email: send
-
-slack: Slack
-
-ec2.server -> slack: alarm
-
-developer -> github: git push
-github -> github actions: trigger
-github actions -> ec2.Server: Deploy

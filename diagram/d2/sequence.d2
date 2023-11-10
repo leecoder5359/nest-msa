@@ -1,23 +1,48 @@
 shape: sequence_diagram
 
 client: Client
-server: NestJS Server
-db: DB
-email: 외부 Email
-slack: Slack
 
-API: {
-  client.message -> server.message: request
-  server.message -> db.message -> server.message
-  server.message -> client.message: response
+api_gateway: API Gateway
+user: User
+video: Video
+analytics: Analytics
+
+sync: {
+  client.message -> api_gateway.message: request
+  api_gateway.message -> user.message
+  user.message -> api_gateway.message: {
+    target-arrowhead: {
+      shape: arrow
+    }
+    style: {
+      stroke-dash: 3
+    }
+  }
+  api_gateway.message -> video.message
+  video.message -> api_gateway.message: {
+    target-arrowhead: {
+      shape: arrow
+    }
+    style: {
+      stroke-dash: 3
+    }
+  }
+  api_gateway.message -> analytics.message
+  analytics.message -> api_gateway.message: {
+    target-arrowhead: {
+      shape: arrow
+    }
+    style: {
+      stroke-dash: 3
+    }
+  }
+  api_gateway.message -> client.message: response
 }
 
-Task Scheduling: {
-  server.task -> db.task -> server.task
-  server.task -> email: send
-  server
-}
-
-error occured: {
-  server -> slack: alarm
+async: {
+  video -> analytics -> video: {
+    target-arrowhead: {
+      shape: arrow
+    }
+  }
 }
