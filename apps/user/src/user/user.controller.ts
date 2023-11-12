@@ -1,6 +1,7 @@
 import { Controller } from '@nestjs/common';
 import { UserService } from './user.service';
 import { MessagePattern } from '@nestjs/microservices';
+import { User } from '@sentry/node';
 
 @Controller()
 export class UserController {
@@ -22,5 +23,17 @@ export class UserController {
     async validate({ email, password }: { email: string; password: string }): Promise<{ id: string }> {
         const { id } = await this.userService.validate(email, password);
         return { id };
+    }
+
+    @MessagePattern({ cmd: 'checkIsAdmin' })
+    async checkIsAdmin({ id }): Promise<boolean> {
+        const isAdmin = await this.userService.checkIsAdmin(id);
+        return isAdmin;
+    }
+
+    @MessagePattern({ cmd: 'getAll' })
+    async getAll(): Promise<User[]> {
+        const users = await this.userService.getAll();
+        return users;
     }
 }
