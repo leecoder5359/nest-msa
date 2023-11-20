@@ -30,3 +30,11 @@
 - Postgres 14.6
 - Docker
 - Git, Github
+
+## 업데이트 예정 목록
+- NestJS 마이크로서비스 적용
+- docker compose를 활용하여 로컬 개발 환경에서 마이크로서비스 세팅
+- docker compose를 활용하여 Postgres, Kafka 세팅
+- TCP를 활용한 동기 통신
+- Kafka를 활용한 비동기 통신
+> 참고: [develop/msa-convert 브랜치](https://github.com/leecoder5359/nest-msa/tree/develop/msa-convert)
